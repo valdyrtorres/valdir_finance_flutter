@@ -1,4 +1,8 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:valdir_finance/src/resources/repository.dart';
+import 'package:valdir_finance/src/ui/authentication/login_page.dart';
+import 'package:valdir_finance/src/ui/home/home_page.dart';
 
 class RootPage extends StatefulWidget {
   static const String routeName = 'root_page';
@@ -8,8 +12,22 @@ class RootPage extends StatefulWidget {
 }
 
 class _RootPageState extends State<RootPage> {
+  final Repository _repository = Repository();
+  Stream<FirebaseUser> _currentUser;
+
+  @override
+  void initState() {
+    _currentUser = _repository.onAuthStateChange;
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Container();
+    return StreamBuilder<FirebaseUser>(
+      stream: _currentUser,
+      builder: (BuildContext context, AsyncSnapshot<FirebaseUser> snapshot) {
+        return snapshot.hasData ? HomePage() : LoginPage();
+      },
+    );
   }
 }

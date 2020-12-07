@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "629570731759",
+    "project_id": "nufinance-a2a85",
+    "storage_bucket": "nufinance-a2a85.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:629570731759:android:b81030d889d47b0a02251a",
+        "android_client_info": {
+          "package_name": "br.com.valdir.valdir_finance"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "629570731759-ec7e2evg2tqmo82m75ab0p1m8dhth4cb.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "br.com.valdir.valdir_finance",
+            "certificate_hash": "6048f19d6a663e388152b56077c75db563fe40ae"
+          }
+        },
+        {
+          "client_id": "629570731759-kj29s2lf2q80ns7e7n96obkatgq4fa09.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC48y6tyxG-tTHxmINsjKgN8S07xOqDJXs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "629570731759-kj29s2lf2q80ns7e7n96obkatgq4fa09.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
