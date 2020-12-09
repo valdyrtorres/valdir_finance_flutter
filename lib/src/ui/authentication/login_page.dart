@@ -2,8 +2,11 @@ import 'dart:ui';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:valdir_finance/src/blocs/authentication/authentication_bloc.dart';
+import 'package:valdir_finance/src/blocs/authentication/authentication_bloc_provider.dart';
 import 'package:valdir_finance/src/ui/widgets/form_field_main.dart';
 import 'package:valdir_finance/src/utils/values/colors.dart';
+import 'package:valdir_finance/src/utils/values/strings.dart';
 
 const double minHeight = 60.0;
 const double maxHeight = 600.0;
@@ -20,8 +23,10 @@ class LoginPage extends StatefulWidget {
   _LoginPageState createState() => _LoginPageState();
 }
 
-class _LoginPageState extends State<LoginPage>
-    with SingleTickerProviderStateMixin {
+class _LoginPageState extends State<LoginPage> with SingleTickerProviderStateMixin {
+  final _scaffoldKey = GlobalKey<ScaffoldState>();
+
+  AuthenticationBloc _authBloc;
   AnimationController _controller;
 
   bool _loginContainerOpened = false;
@@ -34,6 +39,12 @@ class _LoginPageState extends State<LoginPage>
   double _signUpContainerWidth = minWidth;
 
   double _formsContainerMargin = maxFormsContainerMargin;
+
+  @override
+  void didChangeDependencies() {
+    _authBloc = AuthenticationBlocProvider.of(context);
+    super.didChangeDependencies();
+  }
 
   @override
   void initState() {
@@ -98,12 +109,17 @@ class _LoginPageState extends State<LoginPage>
     _controller.fling(velocity: isAnyContainerAnimationCompleted ? -2 : 2);
   }
 
-  double lerp(double min, double max) =>
-      lerpDouble(min, max, _controller.value);
+  double lerp(double min, double max) => lerpDouble(min, max, _controller.value);
+
+  void showErrorMessage(String message) {
+    final snackbar = SnackBar(content: Text(message), duration: Duration(seconds: 2));
+    _scaffoldKey.currentState.showSnackBar(snackbar);
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _scaffoldKey,
       backgroundColor: ColorConstant.colorMainPurple,
       resizeToAvoidBottomInset: false,
       body: Stack(
@@ -202,94 +218,109 @@ class _LoginPageState extends State<LoginPage>
                                                     child: Column(
                                                       children: <Widget>[
                                                         // form fields
-                                                        FormFieldMain(
-                                                          hintText: "Email...",
-                                                          onChanged: (value) {},
-                                                          marginRight: 20.0,
-                                                          marginLeft: 20.0,
-                                                          marginTop: 0.0,
-                                                          textInputType:
-                                                              TextInputType
-                                                                  .text,
-                                                          obscured: false,
-                                                        ),
+                                                        StreamBuilder(
+                                                            stream:
+                                                                _authBloc.email,
+                                                            builder: (context,
+                                                                snapshot) {
+                                                              return FormFieldMain(
+                                                                hintText:
+                                                                    "Email...",
+                                                                onChanged: _authBloc.changeEmail,
+                                                                errorText: snapshot.error,
+                                                                marginRight: 20.0,
+                                                                marginLeft: 20.0,
+                                                                marginTop: 0.0,
+                                                                textInputType: TextInputType.text,
+                                                                obscured: false,
+                                                              );
+                                                            }),
 
-                                                        FormFieldMain(
-                                                          hintText:
-                                                              "Password...",
-                                                          onChanged: (value) {},
-                                                          marginRight: 20.0,
-                                                          marginLeft: 20.0,
-                                                          marginTop: 15.0,
-                                                          textInputType:
-                                                              TextInputType
-                                                                  .text,
-                                                          obscured: true,
-                                                        ),
+                                                        StreamBuilder(
+                                                            stream: _authBloc.password,
+                                                            builder: (context,
+                                                                snapshot) {
+                                                              return FormFieldMain(
+                                                                onChanged: _authBloc.changePassword,
+                                                                errorText: snapshot.error,
+                                                                hintText: "Password...",
+                                                                marginRight: 20.0,
+                                                                marginLeft: 20.0,
+                                                                marginTop: 15.0,
+                                                                textInputType: TextInputType.text,
+                                                                obscured: true,
+                                                              );
+                                                            }),
 
-                                                        FormFieldMain(
-                                                          hintText:
-                                                              "Display Name...",
-                                                          onChanged: (value) {},
-                                                          marginRight: 20.0,
-                                                          marginLeft: 20.0,
-                                                          marginTop: 15.0,
-                                                          textInputType:
-                                                              TextInputType
-                                                                  .text,
-                                                          obscured: false,
-                                                        ),
+                                                        StreamBuilder(
+                                                            stream: _authBloc.displayName,
+                                                            builder: (context,
+                                                                snapshot) {
+                                                              return FormFieldMain(
+                                                                onChanged: _authBloc.changeDisplayName,
+                                                                errorText: snapshot.error,
+                                                                hintText: "Display Name...",
+                                                                marginRight: 20.0,
+                                                                marginLeft: 20.0,
+                                                                marginTop: 15.0,
+                                                                textInputType: TextInputType.text,
+                                                                obscured: false,
+                                                              );
+                                                            }),
                                                       ],
                                                     ),
                                                   ),
                                                 ),
                                                 Positioned.fill(
-                                                  bottom: 25.0,
+                                                  bottom: 15.0,
                                                   child: Align(
-                                                    alignment:
-                                                        Alignment.bottomCenter,
-                                                    child: Align(
-                                                      alignment: Alignment
-                                                          .bottomCenter,
-                                                      child: GestureDetector(
-                                                        onTap: () {},
-                                                        child: Container(
-                                                          margin:
-                                                              EdgeInsets.only(
-                                                                  left: 30.0,
-                                                                  right: 30.0),
-                                                          alignment:
-                                                              Alignment.center,
-                                                          height: 60.0,
-                                                          width: MediaQuery.of(
-                                                                  context)
-                                                              .size
-                                                              .width,
-                                                          decoration:
-                                                              BoxDecoration(
-                                                                  color: Colors
-                                                                      .transparent,
-                                                                  border: Border
-                                                                      .all(
-                                                                    width: 1,
-                                                                    color: ColorConstant
-                                                                        .colorMainPurple,
-                                                                  )),
-                                                          child: Text(
-                                                            'Sign Up',
-                                                            style: TextStyle(
-                                                              color: ColorConstant
-                                                                  .colorMainPurple,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .w400,
-                                                              fontSize: 20.0,
-                                                            ),
-                                                          ),
-                                                        ),
+                                                      alignment: Alignment.bottomCenter,
+                                                      child: StreamBuilder(
+                                                        stream: _authBloc.signInStatus,
+                                                        builder: (context, snapshot){
+                                                          bool isLoggedIn = snapshot.data;
+                                                          if(!snapshot.hasData || snapshot.hasError || !isLoggedIn) {
+                                                            return GestureDetector(
+                                                              onTap: () async {
+                                                                if(_authBloc.validateEmailAndPassword() && _authBloc.validateDisplayName()) {
+                                                                  int response = await _authBloc.registerUser();
+                                                                  if(response < 0){
+                                                                      showErrorMessage(StringConstants.emailOrPasswordIncorrect);
+                                                                  }
+                                                                } else {
+                                                                  showErrorMessage(StringConstants.fillUpFormCorrectly);
+                                                                }
+                                                              },
+                                                              child: Container(
+                                                                margin: EdgeInsets.only(left: 30.0, right: 30.0),
+                                                                alignment: Alignment.center,
+                                                                height: 60.0,
+                                                                width: MediaQuery.of(context).size.width,
+                                                                decoration: BoxDecoration(
+                                                                        color: Colors.transparent,
+                                                                        border: Border.all(
+                                                                          width: 1,
+                                                                          color: ColorConstant.colorMainPurple,
+                                                                        )
+                                                                ),
+                                                                child: Text(
+                                                                  'Sign Up',
+                                                                  style: TextStyle(
+                                                                    color: ColorConstant.colorMainPurple,
+                                                                    fontWeight: FontWeight.w400,
+                                                                    fontSize: 20.0,
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                            );
+                                                          } else {
+                                                            return CircularProgressIndicator(
+                                                              backgroundColor: Colors.white,
+                                                            );
+                                                          }
+                                                        },
                                                       ),
                                                     ),
-                                                  ),
                                                 ),
                                               ],
                                             ),
@@ -343,7 +374,8 @@ class _LoginPageState extends State<LoginPage>
                                                   child: GestureDetector(
                                                     onTap: () {
                                                       if (_loginContainerOpened) {
-                                                        _toggleAuthButtonsScale(true);
+                                                        _toggleAuthButtonsScale(
+                                                            true);
                                                         _toggleNuLogoAndGoogleButton();
                                                       }
                                                     },
@@ -358,80 +390,87 @@ class _LoginPageState extends State<LoginPage>
                                                     child: Column(
                                                       children: <Widget>[
                                                         // form fields
-                                                        FormFieldMain(
-                                                          hintText: "Email...",
-                                                          onChanged: (value) {},
-                                                          marginRight: 20.0,
-                                                          marginLeft: 20.0,
-                                                          marginTop: 0.0,
-                                                          textInputType:
-                                                              TextInputType
-                                                                  .text,
-                                                          obscured: false,
-                                                        ),
+                                                        StreamBuilder(
+                                                            stream: _authBloc.email,
+                                                            builder: (context, snapshot) {
+                                                              return FormFieldMain(
+                                                                hintText: "Email...",
+                                                                onChanged: _authBloc.changeEmail,
+                                                                errorText: snapshot.error,
+                                                                marginRight: 20.0,
+                                                                marginLeft: 20.0,
+                                                                marginTop: 0.0,
+                                                                textInputType: TextInputType.text,
+                                                                obscured: false,
+                                                              );
+                                                            }),
 
-                                                        FormFieldMain(
-                                                          hintText:
-                                                              "Password...",
-                                                          onChanged: (value) {},
-                                                          marginRight: 20.0,
-                                                          marginLeft: 20.0,
-                                                          marginTop: 15.0,
-                                                          textInputType:
-                                                              TextInputType
-                                                                  .text,
-                                                          obscured: true,
-                                                        ),
-
+                                                        StreamBuilder(
+                                                            stream: _authBloc.password,
+                                                            builder: (context, snapshot) {
+                                                              return FormFieldMain(
+                                                                onChanged: _authBloc.changePassword,
+                                                                errorText: snapshot.error,
+                                                                hintText: "Password...",
+                                                                marginRight: 20.0,
+                                                                marginLeft: 20.0,
+                                                                marginTop: 15.0,
+                                                                textInputType: TextInputType.text,
+                                                                obscured: true,
+                                                              );
+                                                            }),
                                                       ],
                                                     ),
                                                   ),
                                                 ),
                                                 Positioned.fill(
-                                                  bottom: 25.0,
+                                                  bottom: 15.0,
                                                   child: Align(
-                                                    alignment:
-                                                        Alignment.bottomCenter,
-                                                    child: Align(
-                                                      alignment: Alignment
-                                                          .bottomCenter,
-                                                      child: GestureDetector(
-                                                        onTap: () {},
-                                                        child: Container(
-                                                          margin:
-                                                              EdgeInsets.only(
-                                                                  left: 30.0,
-                                                                  right: 30.0),
-                                                          alignment:
-                                                              Alignment.center,
-                                                          height: 60.0,
-                                                          width: MediaQuery.of(
-                                                                  context)
-                                                              .size
-                                                              .width,
-                                                          decoration:
-                                                              BoxDecoration(
-                                                                  color: Colors
-                                                                      .transparent,
-                                                                  border: Border
-                                                                      .all(
+                                                    alignment: Alignment.bottomCenter,
+                                                    child: StreamBuilder(
+                                                      stream: _authBloc.signInStatus,
+                                                      builder: (context, snapshot){
+                                                        bool isLoggedIn = snapshot.data;
+                                                        if(!snapshot.hasData || snapshot.hasError || !isLoggedIn) {
+                                                          return GestureDetector(
+                                                            onTap: () async {
+                                                              if(_authBloc.validateEmailAndPassword()) {
+                                                                int response = await _authBloc.loginUser();
+                                                                if(response < 0){
+                                                                  showErrorMessage(StringConstants.emailOrPasswordIncorrect);
+                                                                }
+                                                              } else {
+                                                                showErrorMessage(StringConstants.fillUpFormCorrectly);
+                                                              }
+                                                            },
+                                                            child: Container(
+                                                              margin: EdgeInsets.only(left: 30.0, right: 30.0),
+                                                              alignment: Alignment.center,
+                                                              height: 60.0,
+                                                              width: MediaQuery.of(context).size.width,
+                                                              decoration: BoxDecoration(
+                                                                  color: Colors.transparent,
+                                                                  border: Border.all(
                                                                     width: 1,
-                                                                    color: ColorConstant
-                                                                        .colorMainPurple,
-                                                                  )),
-                                                          child: Text(
-                                                            'Login',
-                                                            style: TextStyle(
-                                                              color: ColorConstant
-                                                                  .colorMainPurple,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .w400,
-                                                              fontSize: 20.0,
+                                                                    color: ColorConstant.colorMainPurple,
+                                                                  )
+                                                              ),
+                                                              child: Text(
+                                                                'Sign Up',
+                                                                style: TextStyle(
+                                                                  color: ColorConstant.colorMainPurple,
+                                                                  fontWeight: FontWeight.w400,
+                                                                  fontSize: 20.0,
+                                                                ),
+                                                              ),
                                                             ),
-                                                          ),
-                                                        ),
-                                                      ),
+                                                          );
+                                                        } else {
+                                                          return CircularProgressIndicator(
+                                                            backgroundColor: Colors.white,
+                                                          );
+                                                        }
+                                                      },
                                                     ),
                                                   ),
                                                 ),
